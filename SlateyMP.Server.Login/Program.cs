@@ -2,9 +2,12 @@ using System;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using SlateyMP.Framework;
+using SlateyMP.Framework.Network;
 
 namespace SlateyMP.Server.Login
 {
@@ -78,20 +81,20 @@ namespace SlateyMP.Server.Login
         static void Main(string[] args)
         {
             Core.Initialize();
+            Core.OutputLogo();
+            Console.WriteLine("[{0:yyyy-MM-dd HH\\:mm\\:ss}] Login Server Starting...", DateTime.Now);
 
             var configBuilder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
             var configRoot = configBuilder.Build();
             var connectionString = configRoot.GetConnectionString("DB");
             db = new MySqlConnection(connectionString);
 
-            Core.OutputLogo();
-
-            Console.WriteLine("[{0:yyyy-MM-dd HH\\:mm\\:ss}] Login Server Starting...", DateTime.Now);
-
             try {
                 db.Open();
                 try {
                     WorldServerStatusReport();
+                    Core.StartUDPReceiver(IPAddress.Any, Convert.ToInt32("44000"), OnReceive);
+                    Core.ServerMainLoop();
                 }                
                 finally {
                     db.Close();
@@ -104,6 +107,10 @@ namespace SlateyMP.Server.Login
 
 				Debug.WriteLine(ex.ToString());
 			}
+        }
+
+        private static void OnReceive(UDPReceiver receiver, SocketAsyncEventArgs e) {
+            Console.WriteLine("Received data");
         }
     }
 }

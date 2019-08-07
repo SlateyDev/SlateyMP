@@ -1,7 +1,10 @@
 using System;
+using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.Versioning;
 using System.Threading;
+using SlateyMP.Framework.Network;
 
 namespace SlateyMP.Framework {
     public static class Core {
@@ -56,6 +59,21 @@ namespace SlateyMP.Framework {
             Console.ForegroundColor = ConsoleColor.Gray;
 
             Console.Title = String.Format("{0} v{1}", ((AssemblyTitleAttribute)Assembly.GetEntryAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false)[0]).Title, Version);
+        }
+
+        public static void StartUDPReceiver(IPAddress listenAddress, int listenPort, Action<UDPReceiver, SocketAsyncEventArgs> OnReceive) {
+            CheckInitialized();
+
+            Socket listenSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            listenSocket.Bind(new IPEndPoint(listenAddress, listenPort));
+
+            var receiver = UDPReceiver.CreateObject();
+            receiver.OnReceive = OnReceive;
+            receiver.ReceiveFromAsync(listenSocket);
+        }
+
+        public static void ServerMainLoop() {
+            CheckInitialized();
         }
     }
 }
