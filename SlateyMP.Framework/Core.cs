@@ -10,6 +10,7 @@ namespace SlateyMP.Framework {
     public static class Core {
         private static bool _Initialized;
 		private static Thread _Thread;
+		private static readonly AutoResetEvent _UpdateSignal = new AutoResetEvent(true);
 
         public static Version Version { get { return Assembly.GetEntryAssembly().GetName().Version; } }
 
@@ -74,6 +75,10 @@ namespace SlateyMP.Framework {
 
         public static void ServerMainLoop() {
             CheckInitialized();
+
+            while (true) {
+				_UpdateSignal.WaitOne();
+            }
         }
     }
 }
