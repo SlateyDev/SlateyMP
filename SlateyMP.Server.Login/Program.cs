@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
+using SlateyMP.Framework;
 
 namespace SlateyMP.Server.Login
 {
@@ -76,10 +77,16 @@ namespace SlateyMP.Server.Login
         
         static void Main(string[] args)
         {
+            Core.Initialize();
+
             var configBuilder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
             var configRoot = configBuilder.Build();
             var connectionString = configRoot.GetConnectionString("DB");
             db = new MySqlConnection(connectionString);
+
+            Core.OutputLogo();
+
+            Console.WriteLine("[{0:yyyy-MM-dd HH\\:mm\\:ss}] Login Server Starting...", DateTime.Now);
 
             try {
                 db.Open();
