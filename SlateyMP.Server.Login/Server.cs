@@ -56,7 +56,7 @@ namespace SlateyMP.Server.Login {
 			sessionData.Account = data.ReadFixedString(usernameLen);
 			UInt16 publicALen = data.ReadUint16();
 			byte[] publicABytes = new byte[publicALen];
-			sessionData.PublicA = new BigInteger(data.ReadFixedBlob(ref publicABytes, publicALen).ToArray());
+			sessionData.PublicA = new BigInteger(data.ReadFixedBlob(ref publicABytes, publicALen));
 			AccountState acc_state = AccountState.LOGIN_DBBUSY;
 
 			string PassString = string.Empty;
@@ -178,7 +178,7 @@ namespace SlateyMP.Server.Login {
 				MySqlCommand cmd = new MySqlCommand(String.Format("UPDATE account SET sessionkey = '{1}', last_ip='{2}', last_login='{3}' WHERE username = '{0}'", sessionData.Account, Convert.ToBase64String(sessionData.SessionKey), session.RemoteEndPoint.Address, DateTime.Now.ToString("yyyy-MM-dd")), Program.db);
 				cmd.ExecuteNonQuery();
 
-				Console.WriteLine("[{0:yyyy-MM-dd HH\\:mm\\:ss}] [{1}:{2}] Auth success for user {3}. [{4}]", DateTime.Now, session.RemoteEndPoint.Address, session.RemoteEndPoint.Port, sessionData.Account, Convert.ToBase64String(sessionData.SessionKey));
+				Console.WriteLine("[{0:yyyy-MM-dd HH\\:mm\\:ss}] [{1}:{2}] Auth success for user {3}. [session key = {4}]", DateTime.Now, session.RemoteEndPoint.Address, session.RemoteEndPoint.Port, sessionData.Account, Convert.ToBase64String(sessionData.SessionKey));
 			}
 			else {
 				//Wrong pass

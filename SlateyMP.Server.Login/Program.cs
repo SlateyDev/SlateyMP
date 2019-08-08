@@ -113,8 +113,6 @@ namespace SlateyMP.Server.Login
         }
 
         private static void OnReceive(UDPReceiver receiver, SocketAsyncEventArgs e) {
-            Console.WriteLine("Received data");
-
             var remoteEP = (IPEndPoint)e.RemoteEndPoint;
 
             if(e.BytesTransferred < 2) {

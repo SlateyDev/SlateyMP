@@ -18,6 +18,7 @@ namespace SlateyMP.Framework.Network
         public int SendTo(Socket s, EndPoint remoteEP) {
             var ret = s.SendTo(_Buffer, 0, _wpos, SocketFlags.None, remoteEP);
             System.Array.Clear(_Buffer, 0, ret);
+			_wpos = 0;
             ReclaimObject(this);
             return ret;
         }
@@ -106,6 +107,16 @@ namespace SlateyMP.Framework.Network
             Array.Copy(getdata, 0, _Buffer, _wpos, getdata.Length);
             _wpos+=getdata.Length;
 			_Buffer[_wpos++] = 0;
+		}
+
+		public void WriteFixedString(string v) {
+			if (v.Length > Buffer_Size - _wpos) {
+				return;
+			}
+
+			byte[] getdata = Encoding.ASCII.GetBytes(v);
+            Array.Copy(getdata, 0, _Buffer, _wpos, getdata.Length);
+            _wpos+=getdata.Length;
 		}
 
         public void WriteSkip(UInt32 count) {

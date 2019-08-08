@@ -31,10 +31,8 @@ namespace SlateyMP.Framework.Network
             _ae.Completed += new EventHandler<SocketAsyncEventArgs>(ReceiveCallback);
         }
 
-        private void ReceiveCallback(object sender, SocketAsyncEventArgs e)
-        {
-            switch (e.LastOperation)
-            {
+        private void ReceiveCallback(object sender, SocketAsyncEventArgs e) {
+            switch (e.LastOperation) {
                 case SocketAsyncOperation.Receive:
                 case SocketAsyncOperation.ReceiveFrom:
 					// Start another receiver while we process this one.
@@ -49,6 +47,7 @@ namespace SlateyMP.Framework.Network
                     // Cleanup and reclaim into pool
                     System.Array.Clear(_Buffer, 0, e.BytesTransferred);
                     _receiveSocket = null;
+					_rpos = 0;
                     OnReceive = null;
                     ReclaimObject(this);
                     break;

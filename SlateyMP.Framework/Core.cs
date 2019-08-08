@@ -62,7 +62,7 @@ namespace SlateyMP.Framework {
             Console.Title = String.Format("{0} v{1}", ((AssemblyTitleAttribute)Assembly.GetEntryAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false)[0]).Title, Version);
         }
 
-        public static void StartUDPReceiver(IPAddress listenAddress, int listenPort, Action<UDPReceiver, SocketAsyncEventArgs> OnReceive) {
+        public static Socket StartUDPReceiver(IPAddress listenAddress, int listenPort, Action<UDPReceiver, SocketAsyncEventArgs> OnReceive) {
             CheckInitialized();
 
             Socket listenSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -71,6 +71,8 @@ namespace SlateyMP.Framework {
             var receiver = UDPReceiver.CreateObject();
             receiver.OnReceive = OnReceive;
             receiver.ReceiveFromAsync(listenSocket);
+
+            return listenSocket;
         }
 
         public static void ServerMainLoop() {
