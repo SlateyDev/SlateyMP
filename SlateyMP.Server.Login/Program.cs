@@ -85,9 +85,9 @@ namespace SlateyMP.Server.Login
             Core.OutputLogo();
             Console.WriteLine("[{0:yyyy-MM-dd HH\\:mm\\:ss}] Login Server Starting...", DateTime.Now);
 
-            var configBuilder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
-            var configRoot = configBuilder.Build();
-            var connectionString = configRoot.GetConnectionString("DB");
+            var connectionString = Environment.GetEnvironmentVariable("LOGIN_SERVER_DB");
+            var login_server_address = IPAddress.Parse(Environment.GetEnvironmentVariable("LOGIN_SERVER_ADDRESS"));
+            var login_server_port = Convert.ToInt32(Environment.GetEnvironmentVariable("LOGIN_SERVER_PORT"));
             db = new MySqlConnection(connectionString);
 
             Server.RegisterOpcodes();
@@ -96,7 +96,8 @@ namespace SlateyMP.Server.Login
                 db.Open();
                 try {
                     WorldServerStatusReport();
-                    Core.StartUDPReceiver(IPAddress.Any, Convert.ToInt32("44000"), OnReceive);
+                    Core.StartUDPReceiver(login_server_address, login_server_port, OnReceive);
+                    Console.WriteLine("[{0:yyyy-MM-dd HH\\:mm\\:ss}] Server listening on {1}:{2}", DateTime.Now, login_server_address, login_server_port);
                     Core.ServerMainLoop();
                 }                
                 finally {

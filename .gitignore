@@ -1,5 +1,5 @@
-.vscode
 */bin
 */obj
 appsettings.json
 *.bak
+.env

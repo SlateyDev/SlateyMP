@@ -35,7 +35,7 @@ namespace SlateyMP.Client {
             Core.Initialize();
             RegisterOpcodes();
             loginSocket = Core.StartUDPReceiver(IPAddress.Parse("127.0.0.1"), 0, OnReceive);
-            loginEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 44000);
+            loginEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 11000);
 
             var random = new RNGCryptoServiceProvider();
             var randoma = new byte[20];

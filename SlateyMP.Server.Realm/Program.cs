@@ -23,9 +23,9 @@ namespace SlateyMP.Server.Realm
             Core.OutputLogo();
             Console.WriteLine("[{0:yyyy-MM-dd HH\\:mm\\:ss}] Realm Server Starting...", DateTime.Now);
 
-            var configBuilder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
-            var configRoot = configBuilder.Build();
-            var connectionString = configRoot.GetConnectionString("DB");
+            var connectionString = Environment.GetEnvironmentVariable("REALM_SERVER_DB");
+            var realm_server_address = IPAddress.Parse(Environment.GetEnvironmentVariable("REALM_SERVER_ADDRESS"));
+            var realm_server_port = Convert.ToInt32(Environment.GetEnvironmentVariable("REALM_SERVER_PORT"));
             db = new MySqlConnection(connectionString);
 
             Server.RegisterOpcodes();
@@ -33,7 +33,8 @@ namespace SlateyMP.Server.Realm
             try {
                 db.Open();
                 try {
-                    Core.StartUDPReceiver(IPAddress.Any, server_port, OnReceive);
+                    Core.StartUDPReceiver(realm_server_address, realm_server_port, OnReceive);
+                    Console.WriteLine("[{0:yyyy-MM-dd HH\\:mm\\:ss}] Server listening on {1}:{2}", DateTime.Now, realm_server_address, realm_server_port);
                     Core.ServerMainLoop();
                 }                
                 finally {

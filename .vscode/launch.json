@@ -1,0 +1,55 @@
+{
+   // Use IntelliSense to find out which attributes exist for C# debugging
+   // Use hover for the description of the existing attributes
+   // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+   "version": "0.2.0",
+   "configurations": [
+        {
+            "name": ".NET Core Launch (Server.Login)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-login",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/SlateyMP.Server.Login/bin/Debug/netcoreapp2.1/SlateyMP.Server.Login.dll",
+            "envFile": "${workspaceFolder}/SlateyMP.Server.Login/.env",
+            "args": [],
+            "cwd": "${workspaceFolder}/SlateyMP.Server.Login",
+            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "externalTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Launch (Server.Realm)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-realm",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/SlateyMP.Server.Realm/bin/Debug/netcoreapp2.1/SlateyMP.Server.Realm.dll",
+            "envFile": "${workspaceFolder}/SlateyMP.Server.Realm/.env",
+            "args": [],
+            "cwd": "${workspaceFolder}/SlateyMP.Server.Realm",
+            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "externalTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Launch (Client)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-client",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/SlateyMP.Client.Tester/bin/Debug/netcoreapp2.1/SlateyMP.Client.Tester.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/SlateyMP.Client.Tester",
+            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "externalTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        }
+    ]
+}
