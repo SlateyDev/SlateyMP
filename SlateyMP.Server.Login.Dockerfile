@@ -7,7 +7,7 @@ COPY ["SlateyMP.Server.Login/SlateyMP.Server.Login.csproj", "SlateyMP.Server.Log
 COPY ["SlateyMP.Framework/SlateyMP.Framework.csproj", "SlateyMP.Framework/"]
 RUN dotnet restore "SlateyMP.Server.Login/SlateyMP.Server.Login.csproj"
 COPY . .
-WORKDIR "/src/SlateyMP.Server.Login"
+WORKDIR /src/SlateyMP.Server.Login
 RUN dotnet build "SlateyMP.Server.Login.csproj" -c Release -o /app
 
 FROM build AS publish

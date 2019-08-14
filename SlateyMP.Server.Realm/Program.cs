@@ -15,8 +15,6 @@ namespace SlateyMP.Server.Realm
     {
         public static MySqlConnection db;
 
-        public static int server_port = 44001;
-
         static void Main(string[] args)
         {
             Core.Initialize();
@@ -26,18 +24,37 @@ namespace SlateyMP.Server.Realm
             var connectionString = Environment.GetEnvironmentVariable("REALM_SERVER_DB");
             var realm_server_address = IPAddress.Parse(Environment.GetEnvironmentVariable("REALM_SERVER_ADDRESS"));
             var realm_server_port = Convert.ToInt32(Environment.GetEnvironmentVariable("REALM_SERVER_PORT"));
+            var realm_name = Environment.GetEnvironmentVariable("REALM_NAME");
             db = new MySqlConnection(connectionString);
 
             Server.RegisterOpcodes();
 
             try {
                 db.Open();
+
+                MySqlCommand sqlcmd = new MySqlCommand(string.Format("SELECT id FROM realm where name = '{0}'", realm_name), db);
+				var foundRealmId = (int?)sqlcmd.ExecuteScalar();
+				if (foundRealmId == null) {
+					Console.WriteLine("[{0:yyyy-MM-dd HH\\:mm\\:ss}] Unable to find realm '{1}' in database...", DateTime.Now, realm_name);
+					return;
+				}
+				var realmId = (int)foundRealmId;
+
                 try {
                     Core.StartUDPReceiver(realm_server_address, realm_server_port, OnReceive);
                     Console.WriteLine("[{0:yyyy-MM-dd HH\\:mm\\:ss}] Server listening on {1}:{2}", DateTime.Now, realm_server_address, realm_server_port);
+
+                    sqlcmd = new MySqlCommand(string.Format("UPDATE realm SET state={1}, address='{2}', port={3} WHERE id={0}", realmId, 2, realm_server_address, realm_server_port), Program.db);
+                    sqlcmd.ExecuteNonQuery();
+
+                    sqlcmd = new MySqlCommand(string.Format("UPDATE realm SET state=1 WHERE id={0}", realmId), db);
+                    sqlcmd.ExecuteNonQuery();
+
                     Core.ServerMainLoop();
                 }                
                 finally {
+					sqlcmd = new MySqlCommand(string.Format("UPDATE realm SET state=0 WHERE id={0}", realmId), db);
+					sqlcmd.ExecuteNonQuery();
                     db.Close();
                 }
             }
